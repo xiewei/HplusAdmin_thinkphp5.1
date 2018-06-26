@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{:config('app.app_name.app_title')} - 账号登录</title>
+    <link href="/public/admin/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/public/admin/css/font-awesome.css" rel="stylesheet">
+    <link href="/public/admin/css/animate.css" rel="stylesheet">
+    <link href="/public/admin/css/style.css" rel="stylesheet">
+    <link href="/public/admin/css/login.min.css" rel="stylesheet">
+    <script>if(window.top !== window.self){ window.top.location = window.location;}</script>
+    <style type="text/css">
+        body{font-family: 微软雅黑;}
+    </style>
+</head>
+
+<body class="signin">
+    <div class="signinpanel">
+        <div class="row">
+
+            <div class="col-sm-6">
+                <div class="signin-info">
+                    <div class="logopanel m-b">
+                        <h1>[ {:config('app.app_name.app_login')} ]</h1>
+                    </div>
+                    <div class="m-b"></div>
+                    <br>
+                    <br>
+                    <br>
+                    <br>
+                </div>
+            </div>
+
+            <div class="col-sm-5">
+                <form class="m-t" role="form" action="{:url('login')}">
+                    <input type="text" class="form-control uname" placeholder="用户名" required="" autocomplete="off" name="u">
+                    <input type="password" class="form-control pword" placeholder="密码" required="" autocomplete="off" name="p">
+                    <input type="text" class="form-control" placeholder="验证码" name="verify" required="">
+                    <p></p>
+                    <img class="img-thumbnail img-responsive reloadverify verifyimg" alt="点击更换" title="点击更换" src="{:url('verify')}" alt="captcha">
+                    <button type="submit" class="btn btn-primary block full-width m-b">登 录</button>
+                </form>
+            </div>
+        </div>
+        <div class="signup-footer">
+            <div class="pull-left">
+                &copy;2017 {:config('app.app_name.app_title')}
+            </div>
+        </div>
+    </div>
+
+    <script type="text/javascript" src="/public/admin/js/jquery.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="/public/admin/css/plugins/toastr/toastr.min.css" />
+    <script type="text/javascript" src="/public/admin/js/plugins/toastr/toastr.min.js"></script>
+    <script type="text/javascript" src="/public/admin/js/default_toastr.js"></script>
+    <script type="text/javascript">
+        //表单提交
+        $(document)
+            .ajaxStart(function(){
+                $("button:submit").attr("disabled", true);
+            })
+            .ajaxStop(function(){
+                $("button:submit").attr("disabled", false);
+            });
+
+        $("form").submit(function(){
+            var self = $(this);
+            $.post(self.attr("action"), self.serialize(), success);
+            return false;
+            function success(data){
+                if(data.code){
+                    window.location.href = data.url;
+                } else {
+                    toastr['error'](data.msg);
+                    // 刷新验证码
+                    $(".reloadverify").click();
+                }
+            }
+        });
+
+        $(function(){
+            //刷新验证码
+            var verifyimg = $(".verifyimg").attr("src");
+            $(".reloadverify").click(function(){
+                if( verifyimg.indexOf('?')>0){
+                    $(".verifyimg").attr("src", verifyimg+'&random='+Math.random());
+                }else{
+                    $(".verifyimg").attr("src", verifyimg.replace(/\?.*$/,'')+'?'+Math.random());
+                }
+            });
+        });
+    </script>
+</body>
+</html>

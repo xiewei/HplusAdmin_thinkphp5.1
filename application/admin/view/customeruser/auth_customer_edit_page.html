@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>{:config('app.app_name.app_title')} - 审批附件</title>
+    {:widget('All/css')}
+
+    <style type="text/css">
+        .fancybox img {
+            margin-bottom: 5px;
+            width: 100%;
+            height: 300px;
+        }
+    </style>
+</head>
+
+<body class="gray-bg">
+    <div class="wrapper wrapper-content">
+        <div class="row animated fadeInRight">
+            <div class="col-sm-3">
+                <div class="ibox float-e-margins">
+                    <div class="ibox-title">
+                        <h5>店铺logo</h5>
+                    </div>
+                    <div class="ibox-content">
+                        <p id="logo_image"></p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-sm-3">
+                <div class="ibox float-e-margins">
+                    <div class="ibox-title">
+                        <h5>营业执照</h5>
+                    </div>
+                    <div class="ibox-content">
+                        <p id="license_image"></p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-sm-3">
+                <div class="ibox float-e-margins">
+                    <div class="ibox-title">
+                        <h5>店铺内图集</h5>
+                    </div>
+                    <div class="ibox-content">
+                        <p id="customer_image"></p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-sm-3">
+                <div class="ibox float-e-margins">
+                    <div class="ibox-title">
+                        <h5>审批</h5>
+                    </div>
+                    <div class="ibox-content">
+                        <form class="form-horizontal" role="form" action="{:url('auth_customer_edit')}">
+                            <input name="id" type="hidden"/>
+
+                            <ul class="sortable-list connectList agile-list">
+                                <li class="warning-element">
+                                    店铺名称：{$data['customer_name']}
+                                </li>
+                                <li class="danger-element">
+                                    店员名称：{$data['user_name']}
+                                </li>
+                                <li class="warning-element">
+                                    店铺地址：{$data['customer_address']}
+                                </li>
+                                <li class="success-element">
+                                    是否有营业执照：{$data.license_state? '是' : '否' }
+                                </li>
+                                <li class="info-element">
+                                    主营产品：
+                                        {volist name="$data['product_type']" id="v"}
+                                            <span class="label label-info">{$v}</span>
+                                        {/volist}
+                                </li>
+                            </ul>
+
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label">审批：</label>
+                                <div class="col-sm-8">
+                                    <select name="state" class="form-control m-b">
+                                        <option value="0">认证拒绝</option>
+                                        <option value="1">认证通过</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <div class="col-sm-offset-3 col-sm-8">
+                                    <button class="btn btn-sm btn-primary" type="submit">操 作</button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {:widget('All/js')}
+
+    <script type="text/javascript">
+        //表单提交
+        $(document)
+            .ajaxStart(function(){
+                $("button:submit").attr("disabled", true);
+            })
+            .ajaxStop(function(){
+                $("button:submit").attr("disabled", false);
+            });
+
+        $("form").submit(function(){
+            layer.load(0,{shade: [0.3,'#fff']});
+            var self = $(this);
+            $.ajax({type:'post',url:self.attr("action"),data:self.serialize(),async:false,
+                success:function(data){
+                    if(data.code){
+                        parent.toastr['success'](data.msg);
+                        parent.$table.bootstrapTable('refresh');
+                        close_layer(0);
+                    } else {
+                        toastr['error'](data.msg);
+                    }
+                },error:function(){
+                        toastr['error']("请求错误");
+                }
+            });
+            layer.closeAll('loading');
+            return false;
+        });
+        function autofill(obj){
+            var data = {$list|raw};
+            $("input[name='id']").val(data.id);
+
+            var license_str="";
+
+            _.forEach(data.license_image, function(v, k) {
+                license_str+='<a class="fancybox" href="'+v+'" title="营业执照'+k+'">';
+                license_str+='    <img src="'+v+'">';
+                license_str+='</a>';
+            });
+            var logo_image="";
+            _.forEach(data.logo_image, function(v, k) {
+                logo_image+='<a class="fancybox" href="'+v+'" title="店铺logo'+k+'">';
+                logo_image+='    <img src="'+v+'">';
+                logo_image+='</a>';
+            });
+            var customer_image="";
+            _.forEach(data.customer_image, function(v, k) {
+                customer_image+='<a class="fancybox" href="'+v+'" title="店铺logo'+k+'">';
+                customer_image+='    <img src="'+v+'">';
+                customer_image+='</a>';
+            });
+
+            $("#customer_image").append(customer_image);
+            $("#license_image").append(license_str);
+            $("#logo_image").append(logo_image);
+
+        }
+    </script>
+</body>
+
+</html>

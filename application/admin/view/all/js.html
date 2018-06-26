@@ -1,0 +1,69 @@
+<script type="text/javascript" src="/public/admin/js/jquery.min.js"></script>
+	<script type="text/javascript" src="/public/admin/js/bootstrap.min.js"></script>
+	<script type="text/javascript" src="/public/admin/js/plugins/layer/layer/layer.js"></script>
+	<link rel="stylesheet" type="text/css" href="/public/admin/css/plugins/toastr/toastr.min.css" />
+	<script type="text/javascript" src="/public/admin/js/plugins/toastr/toastr.min.js"></script>
+	<script type="text/javascript" src="/public/admin/js/cxdate.js"></script>
+	<script type="text/javascript" src="/public/admin/js/plugins/metisMenu/jquery.metisMenu.js"></script>
+	<script type="text/javascript" src="/public/admin/js/plugins/slimscroll/jquery.slimscroll.min.js"></script>
+	<script type="text/javascript" src="/public/admin/js/hplus.min.js"></script>
+	<script type="text/javascript" src="/public/admin/js/contabs.min.js"></script>
+	<script type="text/javascript" src="/public/admin/js/default.js"></script>
+	<script type="text/javascript" src="/public/admin/js/default_toastr.js"></script>
+{//bootstrap-table}
+
+{if
+	(( $controller == 'Admin') AND ( $action == 'index')) OR
+	(( $controller == "Group") AND ( $action == 'index')) OR
+	(( $controller == "Merchantuser") AND ( $action == 'auth_merchant')) OR
+	(( $controller == "Merchantuser") AND ( $action == 'index')) OR
+	(( $controller == "Customeruser") AND ( $action == 'index')) OR
+	(( $controller == "Customeruser") AND ( $action == 'auth_customer')) OR
+	(( $controller == "Slide") AND ( $action == 'index'))
+}
+	<link rel="stylesheet" type="text/css" href="/public/admin/js/plugins/bootstrap-table/bootstrap-table.min.css" />
+	<script type="text/javascript" src="/public/admin/js/plugins/bootstrap-table/bootstrap-table.js"></script>
+	<script type="text/javascript" src="/public/admin/js/plugins/bootstrap-table/extensions/mobile/bootstrap-table-mobile.min.js"></script>
+	<script type="text/javascript" src="/public/admin/js/plugins/bootstrap-table/extensions/export/bootstrap-table-export.min.js"></script>
+	<script type="text/javascript" src="/public/admin/js/plugins/bootstrap-table/extensions/export/bootstrap-table-export.export.js"></script>
+	<script type="text/javascript" src="/public/admin/js/plugins/bootstrap-table/locale/bootstrap-table-zh-CN.min.js"></script>
+{/if}
+
+
+{//formautofill 自动填充}
+
+{if (( $controller == 'Admin') AND ( $action == 'user_edit_page')) OR (( $controller == "Group") AND ( $action == 'index')) OR  (( $controller == 'Customeruser') AND ( $action == 'auth_customer_edit_page')) OR (( $controller == "Slide") AND ( $action == 'slide_edit_page'))}
+	<script type="text/javascript" src="/public/admin/js/jquery.formautofill.min.js"></script>
+{/if}
+
+{//fancybox}
+
+{if (( $controller == 'Customeruser') AND ( $action == 'auth_customer_edit_page'))}
+	<link href="/public/admin/js/plugins/fancybox/jquery.fancybox.css" rel="stylesheet">
+    <script src="/public/admin/js/plugins/fancybox/jquery.fancybox.js"></script>
+{/if}
+
+{if (( $controller == 'Customeruser') AND ( $action == 'auth_customer_edit_page'))}
+	<script src="/public/admin/js/lodash.min.js"></script>
+{/if}
+
+
+
+{//webuploader 上传}
+
+{if (( $controller == 'Admin') AND ( $action == 'user_edit_page')) OR (( $controller == "Group") AND ( $action == 'index')) OR (( $controller == "Slide") AND ( $action == 'slide_edit_page')) }
+	<link rel="stylesheet" type="text/css" href="/public/admin/js/plugins/webuploader/webuploader.css" />
+	<script type="text/javascript" src="/public/admin/js/plugins/webuploader/webuploader.min.js"></script>
+{/if}
+
+{//iCheck}
+
+{if (( $controller == 'Group') AND ( $action == 'group_edit_page')) OR (( $controller == "Group") AND ( $action == 'index')) }
+	<script type="text/javascript" src="/public/admin/js/plugins/iCheck/icheck.min.js"></script>
+	<script type="text/javascript">
+		$(document).ready(function() { $(".i-checks").iCheck({ checkboxClass: "icheckbox_square-green", radioClass: "iradio_square-green", }) });
+	</script>
+{/if}
+
+
+

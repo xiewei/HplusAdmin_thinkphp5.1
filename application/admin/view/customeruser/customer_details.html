@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{:config('app.app_name.app_title')} - 宠物店端用户管理</title>
+    {:widget('All/css')}
+</head>
+
+<body class="gray-bg">
+    <div class="wrapper wrapper-content">
+        <div class="row animated fadeInRight">
+            <div class="col-sm-12">
+                <div class="ibox float-e-margins">
+                    <div class="ibox-content">
+                        <ul class="sortable-list connectList agile-list">
+                            <li class="warning-element">
+                                登录ID：{$data['login_id']}
+                            </li>
+                            <li class="warning-element">
+                                手机号码：{$data['phone']}
+                            </li>
+                            <li class="warning-element">
+                                账户余额：{$data['balance']}
+                            </li>
+                            <li class="warning-element">
+                                冻结金额：{$data['frozenbalace']}
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {:widget('All/js')}
+    <script type="text/javascript">
+    </script>
+</body>
+
+</html>

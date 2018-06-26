@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{:config('app.app_name.app_title')} - 养殖户端用户管理</title>
+    {:widget('All/css')}
+</head>
+
+<body class="gray-bg">
+    <div class="wrapper wrapper-content animated fadeInRight">
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="ibox float-e-margins">
+                    <div class="ibox-content">
+                        <div class="btn-group hidden-xs tooltip_default" id="deal_list_table_Toolbar" role="group">
+                            <button type="button" class="btn btn-outline btn-default" onclick="self.location.reload()" data-placement="top" data-toggle="tooltip" data-original-title="刷新本页">
+                                <i class="fa fa-refresh" aria-hidden="true"></i>
+                            </button>
+                            <button type="button" class="btn btn-outline btn-default" onclick="user_add()" data-placement="top" data-toggle="tooltip" data-original-title="添加管理员">
+                                <i class="fa fa-plus" aria-hidden="true"></i>
+                            </button>
+                        </div>
+                        <table
+                        id="deal_list_table"
+                        data-toggle="table"
+                        data-ajax="list_get"
+                        data-query-params="queryParams"
+                        data-sort-name="id"
+                        data-sort-order="desc"
+                        data-mobile-responsive="true"
+                        data-side-pagination="server"
+                        data-pagination="true"
+                        data-icon-size="outline"
+                        data-row-style="rowStyle"
+                        data-search="true"
+                        data-toolbar="#deal_list_table_Toolbar"
+                        data-search="true"
+                        data-show-refresh="true"
+                        data-show-toggle="false"
+                        data-show-columns="false"
+                        data-show-export="true"
+                        data-unique-id="id"
+                        data-page-list="[15,30,50,100]"
+                        data-page-size="15"
+                        data-detail-formatter="infoview"
+                        data-detail-view="false">
+                            <thead>
+                                <tr>
+                                    <th data-field="id">ID</th>
+                                    <th data-field="login_id">登录ID</th>
+                                    <th data-field="phone">手机号码</th>
+                                    <th data-field="balance">账户余额</th>
+                                    <th data-field="frozenbalace">冻结金额</th>
+                                    <th data-field="state" data-formatter="is_state">锁定</th>
+                                    <th data-field="login_token">登录凭证</th>
+                                    <th data-field="login_time" data-formatter="getYmdTime">登录时间</th>
+                                    <th data-field="action" data-align="center" data-formatter="actionFormatter" data-events="actionEvents">操作</th>
+                                </tr>
+                            </thead>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {:widget('All/js')}
+
+
+    <script type="text/javascript">
+        var rowcount = -1;
+        var $table = $('#deal_list_table');
+
+        window.actionEvents = {
+            'click .merchant_details': function(e, value, row) {
+                var uri = "{:url('/admin/Merchantuser/merchant_details')}";
+                var uriarr = uri.split('.');
+                uriarr[0] += "/id/" + row.id + ".html";
+                var index = layer.open({
+                    scrollbar: false,
+                    shade: [0.3, '#ffffff'],
+                    type: 2,
+                    title: '查看详情',
+                    shadeClose: true,
+                    skin: 'layui-layer-rim',
+                    area: ['75%', '85%'],
+                    content: uriarr[0],
+                    success: function(layero, index) {
+                        var iframeWin = window[layero.find('iframe')[0]['name']];
+                        iframeWin.autofill(row);
+                    }
+                });
+            },
+        };
+
+        function user_add() {
+            var index = layer.open({
+                scrollbar: false,
+                shade: [0.3, '#ffffff'],
+                type: 2,
+                title: '添加管理员',
+                shadeClose: true,
+                area: ['75%', '85%'],
+                content: "{:url('/Admin/Admin/user_edit_page')}",
+            });
+        }
+
+        function actionFormatter(value) {
+            return [
+                '<div class="btn-group dropleft"><button class="btn btn-warning btn-xs dropdown-toggle" data-toggle="dropdown"><span class="caret"></span></button><ul class="dropdown-menu"><li><a class="merchant_details" href="javascript:void(0)">查看详情</a></li></ul></div>'
+            ].join('');
+        }
+
+
+        function is_state(value) {
+            value = parseInt(value);
+            var s = "";
+            switch (value) {
+                case 0:s = "<span onclick=\"set_yesorno(this)\" style=\"cursor:pointer;\" class=\"label label-danger\">冻结</span>";break;
+                case 1:s = "<span onclick=\"set_yesorno(this)\" style=\"cursor:pointer;\" class=\"label label-info\">正常</span>";break;
+                default:s = "<span class=\"label label-danger\">异常</span>";break;
+            }
+            return s;
+        }
+
+
+
+        function merchant_state(value) {
+            var s = "";
+            switch (value) {
+                case 0:s = "<span onclick=\"set_yesorno(this)\" style=\"cursor:pointer;\" class=\"label label-danger\">禁用</span>";break;
+                case 1:s = "<span onclick=\"set_yesorno(this)\" style=\"cursor:pointer;\" class=\"label label-info\">正常</span>";break;
+                case 2:s = "<span onclick=\"set_yesorno(this)\" style=\"cursor:pointer;\" class=\"label label-info\">审核中</span>";break;
+                default:s = "<span class=\"label label-danger\">异常</span>";break;
+            }
+            return s;
+        }
+
+
+        function queryParams(params) {
+            return {
+                pageSize: params.limit,
+                pageNumber: params.offset,
+                sort: params.sort,
+                order: params.order,
+                search: params.search,
+            };
+        }
+
+        function rowStyle(row, index) {
+            var classes = ['active', 'success', 'info', 'warning'];
+            if (index % 2 === 0) {
+                rowcount++;
+                if (rowcount > 3) {
+                    rowcount = 0;
+                }
+                return { classes: classes[rowcount] };
+            }
+            return {};
+        }
+
+        function set_yesorno(obj) {
+            layer.load();
+            var row_id = $(obj).closest("tr").find("td:eq(0)").html();
+            var row_index = $(obj).closest("tr").index();
+            var row_obj = $table.bootstrapTable('getRowByUniqueId', row_id);
+            var field = $(obj).closest("td").index();
+            var field_str = "";
+            var field_value = 0;
+            switch (field) {
+                case 5:field_str = "state";field_value = row_obj.state;break;
+                default:layer.closeAll('loading');toastr['error']("出现异常");return;
+            }
+            field_value == 1 ? field_value = 0 : field_value = 1;
+            $.ajax({type: 'post',async: false,dataType: "json",url: "{:url('/admin/Merchantuser/set_yesorno')}",data: { id: row_id, field: field_str, value: field_value },
+                success: function(data) {
+                    if (data.code) {
+                        $table.bootstrapTable('refresh');
+                        toastr['success'](data.msg);
+                    } else {
+                        toastr['error'](data.msg);
+                    }
+                },
+                error: function() {
+                    toastr['error']("请求错误");
+                }
+            });
+            layer.closeAll('loading');
+        }
+
+        function list_get(params) {
+            $.ajax({
+                type: 'post',
+                dataType: "json",
+                url: "{:url('list_get')}",
+                data: params.data,
+                success: function(data) {
+                    params.success({
+                        total: data.total,
+                        rows: data.rows
+                    });
+                },
+                error: function() {
+                    toastr['error']("请求错误");
+                }
+            });
+        }
+    </script>
+</body>
+
+</html>
